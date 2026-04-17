@@ -14,7 +14,7 @@ import com.riu.hotels.hotel_availability_search.infrastructure.mapper.SearchMapp
 @Component
 public class SearchEventConsumer {
     
-    public static final Logger log = LoggerFactory.getLogger(SearchEventConsumer.class);
+    private static final Logger log = LoggerFactory.getLogger(SearchEventConsumer.class);
 
     private final SearchRepository searchRepository;
     private final SearchMapper searchMapper;
