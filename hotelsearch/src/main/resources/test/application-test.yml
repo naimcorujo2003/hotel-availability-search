@@ -1,0 +1,16 @@
+spring:
+    datasource:
+        url: jdbc:oracle:thin:@localhost:1522/XEPDB1
+        username: ${ORACLE_USER:hotel_user}
+        password: ${ORACLE_PASSWORD:hotel_pass}
+        driver-class-name: oracle.jdbc.OracleDriver
+
+    jpa:
+        hibernate: 
+            ddl-auto: create-drop
+        show-sql: true
+    
+    kafka:
+        bootstrap-servers: localhost:9093
+        consumer:
+            group-id: hotel-availability-group-test

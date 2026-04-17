@@ -1,0 +1,33 @@
+spring:
+    application:
+        name: hotel-availability-search
+
+    datasource:
+        url: jdbc:oracle:thin:@localhost:1521/XEPDB1
+        username: ${ORACLE_USER:hotel_user}
+        password: ${ORACLE_PASSWORD:hotel_pass}
+        driver-class-name: oracle.jdbc.OracleDriver
+
+    jpa:
+        hibernate: 
+            ddl-auto: update
+        properties:
+            hibernate:
+                dialect:  org.hinernate.dialect.OracleDialect
+        show-sql: false
+    
+    kafka:
+        bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+        producer:
+            key-serializer: org.apache.kafka.common.serialization.StringSerializer
+            value-serializer: org.springboot.kafka.support.serializer.JsonSerializer
+        consumer:
+            group-id: hotel-availability-group
+            auto-offset-reset: earliest
+            key-deserializer: org.apache.kafka.common.serializationStringDeSerializer
+            value-deserializer: org.springboot.kafka.support.serializer.JsonDeSerializer
+            properties:
+                "[spring.json.trusted.packages]": "com.riu.hotels.hotel_availability_search.infrastructure.kafka"
+
+server:
+    port: 8080
