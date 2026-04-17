@@ -15,7 +15,9 @@ import com.riu.hotels.hotel_availability_search.domain.model.HotelSearch;
 import com.riu.hotels.hotel_availability_search.domain.port.in.SearchUseCase;
 import com.riu.hotels.hotel_availability_search.domain.port.in.SearchUseCase.SearchCountResult;
 
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 
 
@@ -29,6 +31,12 @@ public class SearchController {
         this.searchUseCase = searchUseCase;
     }
 
+    @Operation(summary = "Create a new hotel search",
+                description = "Validate the playload, publishes to Kafka and returns a unique searchId")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Search created successfully"),
+        @ApiResponse(responseCode = "404", description = "Invalid request playload")
+    })            
     @PostMapping("/search")
     public ResponseEntity<Map<String, String>> search(
                 @Valid @RequestBody SearchRequestDTO request) {
@@ -37,6 +45,13 @@ public class SearchController {
         return ResponseEntity.ok(Map.of("searchId", searchId));
     }
     
+
+    @Operation(summary = "Count similar searches",
+                description = "Returns the search details and count of identical searches")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Search found"),
+        @ApiResponse(responseCode = "404", description = "Search not found")
+    })
     @GetMapping("/count")
     public ResponseEntity<SearchCountResponse> count(
             @RequestParam String searchId) {
