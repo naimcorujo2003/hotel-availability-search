@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  codecov: codecov/codecov@4.0.1
+
 jobs:
   build-and-test:
     docker:
@@ -12,15 +15,18 @@ jobs:
             - maven-deps-
       - run:
           name: Run tests and generate coverage
-          command: mvn verify -DskipITs
+          command: cd hotelsearch && mvn verify -DskipITs
       - save_cache:
           paths:
             - ~/.m2
           key: maven-deps-{{ checksum "pom.xml" }}
+      - codecov/upload:
+          file: hotelsearch/target/site/jacoco/jacoco.xml
+          token: CODECOV_TOKEN  
       - store_test_results:
-          path: target/surefire-reports
+          path: hotelsearch/target/surefire-reports
       - store_artifacts:
-          path: target/site/jacoco
+          path: hotelsearch/target/site/jacoco
           destination: coverage-report
 
 workflows:
