@@ -8,6 +8,8 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 
 public record SearchRequestDTO(
     
@@ -15,9 +17,11 @@ public record SearchRequestDTO(
     String hotelId,
 
     @NotNull(message = "Checkin is required")
+    @JsonFormat(pattern = "dd/MM/yyyy")
     LocalDate checkIn,
 
     @NotNull(message = "CheckOut is required")
+    @JsonFormat(pattern = "dd/MM/yyyy")
     LocalDate checkOut,
 
     @NotEmpty(message = "Ages must not be empty")

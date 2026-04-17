@@ -25,7 +25,7 @@ public class SearchService implements SearchUseCase{
     @Override
     public String search(SearchRequestDTO request) {
         if (!request.checkIn().isBefore(request.checkOut())) {
-            throw new InvalidDateRangeException("CheckIn must be before checkOut");
+            throw new InvalidDateRangeException("Checkin must be before checkout");
         }
 
         String searchId = UUID.randomUUID().toString();
