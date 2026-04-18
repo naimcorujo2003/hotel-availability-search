@@ -6,6 +6,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.riu.hotels.hotel_availability_search.domain.model.HotelSearch;
 import com.riu.hotels.hotel_availability_search.infrastructure.kafka.SearchEventMessage;
@@ -31,9 +32,12 @@ public class SearchMapperTest {
         );
         SearchEventMessage message = searchMapper.toEventMessage(hotelSearch);
 
-        assertThat(message.searchId()).isEqualTo("search-123");
-        assertThat(message.hotelId()).isEqualTo("hotel-456");
-        assertThat(message.ages()).containsExactly(30,25,5);
+        assertAll(
+            () -> assertThat(message.searchId()).isEqualTo("search-123"),
+            () -> assertThat(message.hotelId()).isEqualTo("hotel-456"),
+            () -> assertThat(message.ages()).containsExactly(30,25,5)
+        );
+        
     }
 
     @Test
@@ -48,9 +52,12 @@ public class SearchMapperTest {
 
         HotelSearch hotelSearch = searchMapper.toDomainFromEntity(entity);
 
-        assertThat(hotelSearch.searchId()).isEqualTo("search-123");
-        assertThat(hotelSearch.hotelId()).isEqualTo("hotel-456");
-        assertThat(hotelSearch.ages()).containsExactly(30,25);
+        assertAll(
+            () -> assertThat(hotelSearch.searchId()).isEqualTo("search-123"),
+            () -> assertThat(hotelSearch.hotelId()).isEqualTo("hotel-456"),
+            () -> assertThat(hotelSearch.ages()).containsExactly(30,25)
+        );
+        
     }
 
     @Test
@@ -65,9 +72,13 @@ public class SearchMapperTest {
 
         HotelSearch hotelSearch = searchMapper.toDomain(message);
 
-        assertThat(hotelSearch.searchId()).isEqualTo("search-123");
-        assertThat(hotelSearch.hotelId()).isEqualTo("hotel-456");
-        assertThat(hotelSearch.ages()).containsExactly(30, 25, 5);
+        assertAll(
+            () -> assertThat(hotelSearch.searchId()).isEqualTo("search-123"),
+            () -> assertThat(hotelSearch.hotelId()).isEqualTo("hotel-456"),
+            () -> assertThat(hotelSearch.ages()).containsExactly(30, 25, 5)
+
+        );
+        
     }
 
     @Test
@@ -82,8 +93,11 @@ public class SearchMapperTest {
 
         HotelSearchEntity entity = searchMapper.toEntity(hotelSearch);
 
-        assertThat(entity.getSearchId()).isEqualTo("search-123");
-        assertThat(entity.getHotelId()).isEqualTo("hotel-456");
-        assertThat(entity.getAges()).containsExactly(30, 25);
+        assertAll(
+            () -> assertThat(entity.getSearchId()).isEqualTo("search-123"),
+            () -> assertThat(entity.getHotelId()).isEqualTo("hotel-456"),
+            () -> assertThat(entity.getAges()).containsExactly(30, 25)
+        );
+        
     }
 }
