@@ -1,8 +1,5 @@
 version: 2.1
 
-orbs:
-  codecov: codecov/codecov@4.0.1
-
 jobs:
   build-and-test:
     docker:
@@ -19,10 +16,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.m2
-          key: maven-deps-{{ checksum "pom.xml" }}
-      - codecov/upload:
-          file: hotelsearch/target/site/jacoco/jacoco.xml
-          token: CODECOV_TOKEN  
+          key: maven-deps-{{ checksum "hotelsearch/pom.xml" }} 
       - store_test_results:
           path: hotelsearch/target/surefire-reports
       - store_artifacts:
