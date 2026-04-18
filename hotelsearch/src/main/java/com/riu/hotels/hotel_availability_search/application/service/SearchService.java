@@ -4,6 +4,8 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.riu.hotels.hotel_availability_search.application.dto.SearchRequestDTO;
 import com.riu.hotels.hotel_availability_search.domain.exception.InvalidDateRangeException;
 import com.riu.hotels.hotel_availability_search.domain.model.HotelSearch;
@@ -14,6 +16,7 @@ import com.riu.hotels.hotel_availability_search.domain.port.out.SearchRepository
 @Service
 public class SearchService implements SearchUseCase{
     
+    private static final Logger log = LoggerFactory.getLogger(SearchService.class);
     private final SearchRepository searchRepository;
     private final SearchEventPublisher searchEventPublisher;
 
@@ -22,6 +25,11 @@ public class SearchService implements SearchUseCase{
         this.searchRepository = searchRepository;
     }
 
+
+    /**
+     * Create a new hotel availability search
+     * The searchId is generated in-memory using UUID to avoid any DB round-trip as required by the business specification
+     */
     @Override
     public String search(SearchRequestDTO request) {
         if (!request.checkIn().isBefore(request.checkOut())) {
@@ -29,6 +37,7 @@ public class SearchService implements SearchUseCase{
         }
 
         String searchId = UUID.randomUUID().toString();
+        log.info("Generated searchId: {} for hotelId: {}", searchId, request.hotelId());
 
         HotelSearch hotelSearch = new HotelSearch(
             searchId,
@@ -43,8 +52,13 @@ public class SearchService implements SearchUseCase{
         return searchId;
     }
 
+    /**
+     * Returns the search details and count of identical searches
+     * Age order matters for the count - [30, 25] and [25, 30] are different searches
+     */
     @Override
     public SearchCountResult countSearches(String searchId) {
+        log.info("Counting searches for searchId: {}", searchId);
         HotelSearch hotelSearch = searchRepository.findBySearchId(searchId)
             .orElseThrow(() -> new IllegalArgumentException(
                 String.format("No search found for searchId: %s", searchId)));
@@ -56,6 +70,8 @@ public class SearchService implements SearchUseCase{
             hotelSearch.checkOut(),
             hotelSearch.ages()
         );
+
+        log.info("Found {} similar searches for searchId: {}", count, searchId);
 
         return new SearchCountResult(hotelSearch, count);
     }
