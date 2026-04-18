@@ -14,13 +14,13 @@ public interface SearchJpaRepository extends JpaRepository<HotelSearchEntity, St
             SELECT COUNT(DISTINCT s.searchId)
             FROM HotelSearchEntity s
             WHERE s.hotelId = :hotelId
-            AND s.checkIin = :checkIn
+            AND s.checkIn = :checkIn
             AND s.checkOut = :checkOut
-            ANDs.searchId IN (
+            AND s.searchId IN (
                 SELECT a.searchId FROM HotelSearchEntity a
                 JOIN a.ages age
                 GROUP BY a.searchId
-                HAVING COUNT(age) = :ageSize
+                HAVING COUNT(age) = :agesSize
             )
             """)
     long countSimilarSearches(

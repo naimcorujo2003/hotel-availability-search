@@ -15,7 +15,7 @@ public class SearchMapper {
             hotelSearch.hotelId(),
             hotelSearch.checkIn(),
             hotelSearch.checkOut(),
-            hotelSearch.ages() 
+            hotelSearch.ages()
         );
     }
 

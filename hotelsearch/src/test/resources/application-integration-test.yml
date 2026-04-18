@@ -1,0 +1,24 @@
+spring:
+    datasource:
+        driver-class-name: oracle.jdbc.OracleDriver
+    jpa:
+        defer-datasource-initialization: true
+        hibernate:
+            ddl-auto: create
+        properties:
+            hibernate: 
+                dialect: org.hibernate.dialect.OracleDialect
+                query:
+                    startup-check: false
+        show-sql: true
+    kafka:
+        consumer:
+            group-id: hotel-availability-group-test
+            auto-offset-reset: earliest
+            key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+            properties:
+                "[spring.json.trusted.packages]": "com.riu.hotels.hotel_availability_search.infrastructure.kafka"
+        producer:
+            key-serializer: org.apache.kafka.common.serialization.StringSerializer
+            value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
