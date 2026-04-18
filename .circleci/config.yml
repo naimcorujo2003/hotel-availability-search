@@ -11,7 +11,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - maven-deps-{{ checksum "pom.xml" }}
+            - maven-deps-{{ checksum "hotelsearch/pom.xml" }}
             - maven-deps-
       - run:
           name: Run tests and generate coverage
