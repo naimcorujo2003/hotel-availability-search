@@ -37,14 +37,12 @@ public class SearchRepositoryAdapterTest {
                 "search-123", "hotel-456",
                 LocalDate.of(2024, 1, 10),
                 LocalDate.of(2024, 1, 15),
-                List.of(30, 25)
-        );
+                List.of(30, 25));
         HotelSearchEntity entity = new HotelSearchEntity(
                 "search-123", "hotel-456",
                 LocalDate.of(2024, 1, 10),
                 LocalDate.of(2024, 1, 15),
-                List.of(30, 25)
-        );
+                List.of(30, 25));
         when(searchMapper.toEntity(hotelSearch)).thenReturn(entity);
         searchRepositoryAdapter.save(hotelSearch);
         verify(jpaRepository).save(entity);
@@ -56,14 +54,12 @@ public class SearchRepositoryAdapterTest {
                 "search-123", "hotel-456",
                 LocalDate.of(2024, 1, 10),
                 LocalDate.of(2024, 1, 15),
-                List.of(30, 25)
-        );
+                List.of(30, 25));
         HotelSearch hotelSearch = new HotelSearch(
                 "search-123", "hotel-456",
                 LocalDate.of(2024, 1, 10),
                 LocalDate.of(2024, 1, 15),
-                List.of(30, 25)
-        );
+                List.of(30, 25));
         when(jpaRepository.findById("search-123")).thenReturn(Optional.of(entity));
         when(searchMapper.toDomainFromEntity(entity)).thenReturn(hotelSearch);
         Optional<HotelSearch> result = searchRepositoryAdapter.findBySearchId("search-123");
@@ -86,9 +82,8 @@ public class SearchRepositoryAdapterTest {
                 "search-123", "hotel-456",
                 LocalDate.of(2024, 1, 10),
                 LocalDate.of(2024, 1, 15),
-                List.of(30, 25)
-        );
-        when(jpaRepository.findByHotelIdAndCheckInAndCheckOut(
+                List.of(30, 25));
+        when(jpaRepository.findSimilarSearches(
                 "hotel-456",
                 LocalDate.of(2024, 1, 10),
                 LocalDate.of(2024, 1, 15)))
@@ -97,8 +92,7 @@ public class SearchRepositoryAdapterTest {
                 "hotel-456",
                 LocalDate.of(2024, 1, 10),
                 LocalDate.of(2024, 1, 15),
-                List.of(30, 25)
-        );
+                List.of(30, 25));
         assertThat(count).isEqualTo(1L);
     }
 
@@ -108,9 +102,8 @@ public class SearchRepositoryAdapterTest {
                 "search-123", "hotel-456",
                 LocalDate.of(2024, 1, 10),
                 LocalDate.of(2024, 1, 15),
-                List.of(30, 25)
-        );
-        when(jpaRepository.findByHotelIdAndCheckInAndCheckOut(
+                List.of(30, 25));
+        when(jpaRepository.findSimilarSearches(
                 "hotel-456",
                 LocalDate.of(2024, 1, 10),
                 LocalDate.of(2024, 1, 15)))
@@ -119,8 +112,7 @@ public class SearchRepositoryAdapterTest {
                 "hotel-456",
                 LocalDate.of(2024, 1, 10),
                 LocalDate.of(2024, 1, 15),
-                List.of(25, 30)
-        );
+                List.of(25, 30));
         assertThat(count).isEqualTo(0L);
     }
 }
