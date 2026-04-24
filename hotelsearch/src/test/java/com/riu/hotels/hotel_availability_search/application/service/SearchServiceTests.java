@@ -19,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.riu.hotels.hotel_availability_search.application.dto.SearchRequestDTO;
 import com.riu.hotels.hotel_availability_search.application.port.in.SearchUseCase.SearchCountResult;
 import com.riu.hotels.hotel_availability_search.domain.exception.InvalidDateRangeException;
 import com.riu.hotels.hotel_availability_search.domain.model.HotelSearch;
@@ -122,6 +123,17 @@ public class SearchServiceTests {
         assertThatThrownBy(() -> searchService.countSearches("uknown"))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining("No search found for searchId: uknown");
+    }
+
+    @Test
+    void searchRequestDTO_shouldHandleNullAges() {
+        SearchRequestDTO dto = new SearchRequestDTO(
+            "hotel123",
+            LocalDate.of(2024, 1, 10),
+            LocalDate.of(2024, 1, 15),
+            null
+        );
+        assertThat(dto.ages()).isNull();
     }
 
 }
