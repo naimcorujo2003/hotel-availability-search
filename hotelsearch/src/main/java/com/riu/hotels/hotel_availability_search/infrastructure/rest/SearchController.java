@@ -1,5 +1,6 @@
 package com.riu.hotels.hotel_availability_search.infrastructure.rest;
 
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.UUID;
 
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.riu.hotels.hotel_availability_search.application.dto.SearchRequestDTO;
 import com.riu.hotels.hotel_availability_search.application.port.in.SearchUseCase;
 import com.riu.hotels.hotel_availability_search.application.port.in.SearchUseCase.SearchCountResult;
@@ -76,8 +78,8 @@ public class SearchController {
                 result.hotelSearch().searchId(),
                 new SearchCountResponse.SearchDetail(
                     hs.hotelId(),
-                    hs.checkIn().toString(),
-                    hs.checkOut().toString(),
+                    hs.checkIn(),
+                    hs.checkOut(),
                     hs.ages()
                 ),
                 result.count()
@@ -92,8 +94,10 @@ public class SearchController {
     ) {
         record SearchDetail(
             String hotelId,
-            String checkIn,
-            String checkOut,
+            @JsonFormat(pattern = "dd/MM/yyyy")
+            LocalDate checkIn,
+            @JsonFormat(pattern = "dd/MM/yyyy")
+            LocalDate checkOut,
             java.util.List<Integer> ages
         ) {}
     }
