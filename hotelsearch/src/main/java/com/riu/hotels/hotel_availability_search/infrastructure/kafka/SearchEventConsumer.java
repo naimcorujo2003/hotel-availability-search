@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.riu.hotels.hotel_availability_search.domain.model.HotelSearch;
 import com.riu.hotels.hotel_availability_search.domain.port.out.SearchRepository;
-import com.riu.hotels.hotel_availability_search.infrastructure.mapper.SearchMapper;;
+import com.riu.hotels.hotel_availability_search.infrastructure.mapper.SearchMapper;
 
 
 @Component
@@ -25,11 +25,18 @@ public class SearchEventConsumer {
         this.searchMapper = searchmapper;
     }
     
+    /**
+     * Consumes hotel availability search events from Kafka and persists them to the database
+     * Uses Java 21 Virtual threads to avoid blocking the Kafka consumer thread pool,
+     * allowing high thoughtput without exhausting platform threads. 
+     */
     @KafkaListener(
         topics = "hotel_availability_searches",
-        groupId = "${spring.kafka.consumer.group-id}"
+        groupId = "hotel-availability-group"
     )
     public void consume(SearchEventMessage message) {
+        log.info("Recieved search event for searchId: {}", message.searchId());
+
         Thread.ofVirtual().start(() -> {
             try {
                 HotelSearch hotelSearch = searchMapper.toDomain(message);

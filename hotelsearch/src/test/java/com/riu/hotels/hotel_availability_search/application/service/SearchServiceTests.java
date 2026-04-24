@@ -1,6 +1,7 @@
 package com.riu.hotels.hotel_availability_search.application.service;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -18,10 +19,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.riu.hotels.hotel_availability_search.application.dto.SearchRequestDTO;
+import com.riu.hotels.hotel_availability_search.application.port.in.SearchUseCase.SearchCountResult;
 import com.riu.hotels.hotel_availability_search.domain.exception.InvalidDateRangeException;
 import com.riu.hotels.hotel_availability_search.domain.model.HotelSearch;
-import com.riu.hotels.hotel_availability_search.domain.port.in.SearchUseCase.SearchCountResult;
 import com.riu.hotels.hotel_availability_search.domain.port.out.SearchEventPublisher;
 import com.riu.hotels.hotel_availability_search.domain.port.out.SearchRepository;
 
@@ -36,12 +36,13 @@ public class SearchServiceTests {
     @InjectMocks
     private SearchService searchService;
 
-    private SearchRequestDTO validRequest;
+    private HotelSearch validRequest;
 
     @BeforeEach
     void setUp() {
-        validRequest = new SearchRequestDTO(
-            "hotel123",
+        validRequest = new HotelSearch(
+            "search-123",
+            "hotel-123",
             LocalDate.of(2024, 1, 10),
             LocalDate.of(2024, 1, 15),
             List.of(30, 25, 5)
@@ -58,7 +59,8 @@ public class SearchServiceTests {
 
     @Test
     void search_shouldThrowException_whenCheckInIsAfterCheckOut() {
-        SearchRequestDTO invalidRequest = new SearchRequestDTO(
+        HotelSearch invalidRequest = new HotelSearch(
+            "search-123",
             "hotel123",
             LocalDate.of(2024, 1, 15),
             LocalDate.of(2024, 1, 10),
@@ -75,7 +77,8 @@ public class SearchServiceTests {
     @Test
     void search_shouldThrowException_whenCheckInEqualsCheckOut() {
         LocalDate sameDate = LocalDate.of(2024,1, 10);
-        SearchRequestDTO invaliRequest = new SearchRequestDTO(
+        HotelSearch invaliRequest = new HotelSearch(
+            "search-123",
             "hotel123",
             sameDate,
             sameDate,
@@ -104,8 +107,11 @@ public class SearchServiceTests {
         
         SearchCountResult result = searchService.countSearches("search123");
 
-        assertThat(result.count()).isEqualTo(5L);
-        assertThat(result.hotelSearch().searchId()).isEqualTo("search123");
+        assertAll(
+            () -> assertThat(result.count()).isEqualTo(5L),
+            () -> assertThat(result.hotelSearch().searchId()).isEqualTo("search123")
+        );
+        
     }
 
     @Test

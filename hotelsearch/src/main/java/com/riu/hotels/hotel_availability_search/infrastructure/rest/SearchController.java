@@ -1,6 +1,7 @@
 package com.riu.hotels.hotel_availability_search.infrastructure.rest;
 
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.riu.hotels.hotel_availability_search.application.dto.SearchRequestDTO;
+import com.riu.hotels.hotel_availability_search.application.port.in.SearchUseCase;
+import com.riu.hotels.hotel_availability_search.application.port.in.SearchUseCase.SearchCountResult;
 import com.riu.hotels.hotel_availability_search.domain.model.HotelSearch;
-import com.riu.hotels.hotel_availability_search.domain.port.in.SearchUseCase;
-import com.riu.hotels.hotel_availability_search.domain.port.in.SearchUseCase.SearchCountResult;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -24,6 +25,7 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping
 public class SearchController {
+    
     private final SearchUseCase searchUseCase;
     
     
@@ -35,13 +37,24 @@ public class SearchController {
                 description = "Validate the playload, publishes to Kafka and returns a unique searchId")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Search created successfully"),
-        @ApiResponse(responseCode = "404", description = "Invalid request playload")
+        @ApiResponse(responseCode = "400", description = "Invalid request playload")
     })            
     @PostMapping("/search")
     public ResponseEntity<Map<String, String>> search(
                 @Valid @RequestBody SearchRequestDTO request) {
             
-        String searchId = searchUseCase.search(request);
+        String searchId = UUID.randomUUID().toString();
+
+        HotelSearch hotelSearch = new HotelSearch(
+            searchId,
+            request.hotelId(),
+            request.checkIn(),
+            request.checkOut(),
+            request.ages()
+        );
+
+        searchUseCase.search(hotelSearch);
+
         return ResponseEntity.ok(Map.of("searchId", searchId));
     }
     

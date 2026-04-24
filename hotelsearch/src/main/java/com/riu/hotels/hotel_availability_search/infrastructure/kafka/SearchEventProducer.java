@@ -25,17 +25,29 @@ public class SearchEventProducer implements SearchEventPublisher{
     } 
 
     /**
-     * Publishes a hotel availabilkity search event to Kafka
+     * Publishes a hotel availability search event to Kafka
      * The searchId is used as the message key to ensure ordering
      * of events for the same search within a partition
      */
     @Override
     public void publish(HotelSearch hotelSearch) {
-        SearchEventMessage message = searchMapper.toEventMessage(hotelSearch);
-        kafkaTemplate.send(KafkaConfig.TOPIC_HOTEL_AVAILABILITY_SEARCHES,
-                hotelSearch.searchId(), message);
+        
+        log.info("Publishing search event for searchId: {}", hotelSearch.searchId());
 
-        log.info("Successfully published search event for searchId: {}", hotelSearch.searchId());
+        SearchEventMessage message = searchMapper.toEventMessage(hotelSearch);
+        
+        kafkaTemplate.send(KafkaConfig.TOPIC_HOTEL_AVAILABILITY_SEARCHES,
+                hotelSearch.searchId(), message)
+                .whenComplete((result, ex) -> {
+                    if (ex != null) {
+                        log.error("Failed to publish search event for searchId: {} - reason : {}",
+                                hotelSearch.searchId(), ex.getMessage());
+                    }else {
+                        log.info("Successfully published search event for searchId: {} - offset: {}",
+                                        hotelSearch.searchId(),
+                                        result.getRecordMetadata().offset());
+                    }
+                });
     }
     
 }

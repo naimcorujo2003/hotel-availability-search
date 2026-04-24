@@ -1,19 +1,13 @@
 package com.riu.hotels.hotel_availability_search.application.service;
 
-import java.util.UUID;
-
-import org.springframework.stereotype.Service;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.riu.hotels.hotel_availability_search.application.dto.SearchRequestDTO;
+import com.riu.hotels.hotel_availability_search.application.port.in.SearchUseCase;
 import com.riu.hotels.hotel_availability_search.domain.exception.InvalidDateRangeException;
 import com.riu.hotels.hotel_availability_search.domain.model.HotelSearch;
-import com.riu.hotels.hotel_availability_search.domain.port.in.SearchUseCase;
 import com.riu.hotels.hotel_availability_search.domain.port.out.SearchEventPublisher;
 import com.riu.hotels.hotel_availability_search.domain.port.out.SearchRepository;
 
-@Service
 public class SearchService implements SearchUseCase{
     
     private static final Logger log = LoggerFactory.getLogger(SearchService.class);
@@ -31,25 +25,16 @@ public class SearchService implements SearchUseCase{
      * The searchId is generated in-memory using UUID to avoid any DB round-trip as required by the business specification
      */
     @Override
-    public String search(SearchRequestDTO request) {
-        if (!request.checkIn().isBefore(request.checkOut())) {
+    public String search(HotelSearch hotelSearch) {
+        if (!hotelSearch.checkIn().isBefore(hotelSearch.checkOut())) {
             throw new InvalidDateRangeException("Checkin must be before checkout");
         }
 
-        String searchId = UUID.randomUUID().toString();
-        log.info("Generated searchId: {} for hotelId: {}", searchId, request.hotelId());
-
-        HotelSearch hotelSearch = new HotelSearch(
-            searchId,
-            request.hotelId(), 
-            request.checkIn(),
-            request.checkOut(),
-            request.ages()
-        );
+        log.info("Generated searchId: {} for hotelId: {}", hotelSearch.searchId(), hotelSearch.hotelId());
 
         searchEventPublisher.publish(hotelSearch);
 
-        return searchId;
+        return hotelSearch.searchId();
     }
 
     /**
