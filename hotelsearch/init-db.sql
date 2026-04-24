@@ -1,0 +1,4 @@
+CONNECT sys/hotel_pass@localhost:1521/XEPDB1 AS SYSDBA
+CREATE USER hotel_user IDENTIFIED BY hotel_pass;
+GRANT CONNECT, RESOURCE TO hotel_user;
+GRANT UNLIMITED TABLESPACE TO hotel_user;

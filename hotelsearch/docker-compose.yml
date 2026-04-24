@@ -12,28 +12,11 @@ services:
       - oracle-dev-data:/opt/oracle/oradata
       - ./init-db.sql:/opt/oracle/scripts/startup/init-db.sql
     healthcheck:
-      test: ["CMD-SHELL", "sqlplus -s sys/hotel_pass@localhost:1521/XEPDB1 as sysdba <<< 'SELECT 1 FROM DUAL;'"]
+      test: ["CMD-SHELL", "sqlplus -s hotel_user/hotel_pass@localhost:1521/XEPDB1 <<< 'SELECT 1 FROM DUAL;'"]
       interval: 15s
       timeout: 15s
       retries: 30
       start_period: 180s
-    
-  oracle-test:
-    image: container-registry.oracle.com/database/express:21.3.0-xe
-    container_name: oracle-test
-    environment:
-      ORACLE_PWD: hotel_pass
-      ORACLE_CHARACTERSET: AL32UTF8
-    ports:
-      - "1522:1521"
-    volumes:
-      - oracle-test-data:/opt/oracle/oradata
-    healthcheck:
-      test: ["CMD-SHELL", "echo 'SELECT 1 FROM DUAL;' | sqlplus -s hotel_user/hotel_pass@localhost:1521/XEPDB1"]
-      interval: 30s
-      timeout: 30s
-      retries: 20
-      start_period: 120s
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.9.0
@@ -85,7 +68,5 @@ services:
 
 volumes:
   oracle-dev-data:
-    driver: local
-  oracle-test-data:
     driver: local
 

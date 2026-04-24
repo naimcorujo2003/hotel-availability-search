@@ -36,7 +36,10 @@ public class SearchRepositoryAdapter implements SearchRepository {
     @Override
     public long countSimilarSearches(String hotelId, LocalDate checkIn,
                                     LocalDate checkOut, List<Integer> ages) {
-        return jpaRepository.countSimilarSearches(hotelId, checkIn, checkOut, ages.size());
+        return jpaRepository.findByHotelIdAndCheckInAndCheckOut(hotelId, checkIn, checkOut)
+                .stream()
+                .filter(entity -> entity.getAges().equals(ages))
+                .count();
     }
 
 }
